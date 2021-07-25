@@ -1,7 +1,7 @@
 ---
 title: Dynamic Programming
 author: zjh
-date: 2020-06-20
+date: 2021-06-20
 last_modified_at: 2020-06-20
 categories: [algorithm]
 tags: [note]
