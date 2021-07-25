@@ -8,7 +8,7 @@ tags: [note]
 ---
 
 ## 引言
-之前我推荐过[两本算法书](2019-12-30-computer-books.html)，现在再次翻阅回味，有了想写笔记的想法。
+之前我推荐过[两本算法书](/posts/computer-books)，现在再次翻阅回味，有了想写笔记的想法。
 本篇以其中的这本书[Algorithms by Jeff Erickson](http://jeffe.cs.illinois.edu/teaching/algorithms/)的第三章为基础，
 写一些笔记。
 
@@ -16,10 +16,10 @@ tags: [note]
 
 ### 音乐小知识
 
-Music is made up of notes of different lengths (that’s how we have rhythm), and we measure the length of notes in beats. 
+Music is made up of notes of different lengths (that’s how we have rhythm), and we measure the length of notes in beats.
 音乐由不同长度的notes组成，而note的长度以节拍(beat)为单位来衡量。
 
-![Note VS Beat](../assets/img/2021-06-20-algorithms-dynamic-programming/note-values.png)
+![Note VS Beat](/assets/img/2021-06-20-algorithms-dynamic-programming/note-values.png)
 
 beat:表示节拍。
 Bar or Measure (They’re the same thing!)：
@@ -32,7 +32,7 @@ Meter: Meter is a specific pattern of strong and weak pulses – or, you can thi
 [Banburismus](https://en.wikipedia.org/wiki/Banburismus)
 > Banburismus was a cryptanalytic process developed by Alan Turing at Bletchley Park in Britain during the Second World War
 
-cryptanalytic（ 密码分析的） 
+cryptanalytic（ 密码分析的）
 
 
 

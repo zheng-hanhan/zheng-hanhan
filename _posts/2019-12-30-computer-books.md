@@ -6,7 +6,6 @@ created: 2019-12-30
 tags: [general, default]
 summary: "本文列举了一些注重境界提升的优秀书籍供大家参考"
 sidebar: mydoc_sidebar
-permalink: 2019-12-30-computer-books.html
 folder: general
 pin: true
 ---
