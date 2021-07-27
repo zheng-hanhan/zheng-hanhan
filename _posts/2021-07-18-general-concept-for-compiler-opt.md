@@ -9,7 +9,7 @@ tags: [note]
 
 ## 引言
 搜索了一些关于编译器优化的一些文章，对其中一些观点进行了摘抄和注解
- 
+
 
 ## [XL Fortran for Blue Gene/Q 14.1.0](https://www.ibm.com/docs/en/xffbg/121.141?topic=guide-optimizing-your-applications)
 
@@ -68,7 +68,7 @@ tags: [note]
 
 上面列举了XL编译器在O2级别包含的其中一些常见的优化
 
-> Even with -O2 optimizations, some useful information about your source code is made available to the debugger if you specify -g. Using a higher -g level increases the information provided to the debugger, but reduces the optimization that can be done. Conversely, higher optimization levels can transform code to an extent to which debugging information is no longer accurate. Use that information with discretion. 
+> Even with -O2 optimizations, some useful information about your source code is made available to the debugger if you specify -g. Using a higher -g level increases the information provided to the debugger, but reduces the optimization that can be done. Conversely, higher optimization levels can transform code to an extent to which debugging information is no longer accurate. Use that information with discretion.
 
 优化会导致debug信息变得不准确。在XL编译器中，你可以了通过-g保留一些debug信息，但是保留的越多，相应的能做的优化就会减少。
 我们从XL编译器上看到编译器所具有公共特征，优化和debug能力之间是具有一定的tradeoff在里面的，此消彼长。
@@ -120,7 +120,7 @@ tags: [note]
 > Optimizing at -O4 builds on -O3 by triggering -qipa=level=1 which performs **interprocedural analysis (IPA), optimizing your entire application as a unit**. This option is particularly pertinent to applications that contain a large number of frequently used routines.
 
 > To make full use of IPA optimizations, you must specify -O4 on the compilation and link steps of your application build as interprocedural analysis occurs in stages at **both compile and link time**.
-> 
+>
 > Potential trade-offs at level 4
 > In addition to the trade-offs already mentioned for -O3, specifying -qipa can **significantly increase compilation time**, especially at the link step.
 
@@ -153,7 +153,7 @@ Beyond -qipa, -O4 enables other optimization options:
 > * Makes full use of loop optimizations and Interprocedural analysis (IPA)
 
 > As the highest optimization level, -O5 includes all -O4 optimizations and deepens whole program analysis by increasing the -qipa level to 2. Compiling with -O5 also increases how aggressively the optimizer pursues aliasing improvements. Additionally, if your application contains a mix of C/C++ and Fortran code that you compile using the XL compilers, you can increase performance by compiling and linking your code with the -O5 option.
-> 
+>
 > Potential trade-offs at level 5
 > Compiling at -O5 **requires more compile time and machine resources** than any other optimization levels, particularly if you include -O5 on the IPA link step. Compile at -O5 as the final phase in your optimization process after successfully compiling and executing your application at -O4.
 
@@ -217,7 +217,125 @@ The following are some of the link-time transformations that IPA can use to rest
 * IPA Levels and other IPA suboptions
 * Using IPA across the XL compiler family
 
-##### Using compiler reports to diagnose optimization opportunities
+##### [Using compiler reports to diagnose optimization opportunities](https://www.ibm.com/docs/en/xffbg/121.141?topic=techniques-using-compiler-reports-diagnose-optimization-opportunities)
+这里主要讲述通过-qlistfmt选项，将优化过程中使用了哪些优化pass列举出来，
+
+
+**Inline reports**
+
+> if compiled with **-qinline** and one of **-qlistfmt=xml=inlines, -qlistfmt=html=inlines, -qlistfmt=xml or -qlistfmt=html**, the compiler report that is generated includes a list of inline attempts during the compilation. The report also specifies the type of attempt and its outcome.
+
+> For each function that the compiler has attempted to inline, there is an **indication** of whether the inline was successful. The report might contain any number of explanations for a named function that **has not been** successfully inlined. Some examples of these explanations are:
+
+> - RecursiveCall - The function is not inlined because it is recursive.
+> - ProhibitedByUser - Inlining was not performed because of a user specified pragma or directive.
+> - CallerIsNoopt - No inlining was performed because the caller was compiled without optimization.
+> - WeakAndNotExplicitlyInline - The calling function is weak and not marked as inline.
+
+**Loop transformations**
+> If compiled with **-qhot** and **one of -qlistfmt=xml=transforms, -qlistfmt=html=transforms, -qlistfmt=xml or -qlistfmt=html**, the compiler report that is generated includes a list of the transformations performed on all loops in the file during the compilation. It also lists reasons **why **some transformations were **not** performed.
+
+> - Reasons why a loop cannot be automatically parallelized
+> - Reasons why a loop cannot be unrolled
+> - Reasons why SIMD vectorization failed
+
+**Data reorganizations**
+> If compiled with **-qhot** and one of **-qlistfmt=xml=data, -qlistfmt=html=data, -qlistfmt=xml or -qlistfmt=html**, the compiler report that is generated includes a list of data reorganizations performed on the program during compilation. Here are some examples of data reorganizations:
+
+> - Array splitting
+> - Array coalescing
+> - Array interleaving
+> - Array transposition
+> - Common block splitting
+> - Memory merge
+
+>For each of these reorganizations, the report contains details about the name of the data, file names, line numbers, and the region names.
+#### [Debugging optimized code](https://www.ibm.com/docs/en/xffbg/121.141?topic=applications-debugging-optimized-code)
+
+> Debugging optimized programs presents special usability problems. Optimization can **change the sequence of operations**, **add or remove code**, **change variable data locations**, and **perform other transformations that make it difficult to associate the generated code with the original source statements**.
+
+> For example:
+>
+> Data location issues
+- With an optimized program, it is not always certain where the most current value for a variable is located. For example, a value in memory may not be current if the most current value is being stored in a register. Most debuggers are incapable of following the removal of stores to a variable, and to the debugger it appears as though that variable is never updated, or possibly even set. This contrasts with no optimization where all values are flushed back to memory and debugging can be more effective and usable.
+
+> Instruction scheduling issues
+- With an optimized program, the compiler may reorder instructions. That is, instructions may not be executed in the order the programmer would expect based on the sequence of lines in their original source code. Also, the sequence of instructions may not be contiguous. As the user steps through their program with a debugger, it may appear as if they are returning to a previously executed line in their code (interleaving of instructions).
+
+> Consolidating variable values
+- Optimizations can result in the removal and consolidation of variables. For example, if a program has two expressions that assign the same value to two different variables, the compiler may substitute a single variable. This can inhibit debug usability because a variable that a programmer is expecting to see is no longer available in the optimized program.
+
+> There are a couple of different approaches you can take to improve debug capabilities while also optimizing your program:
+
+- Debug non-optimized code first
+    Debug a non-optimized version of your program first, then recompile it with your desired optimization options. See Debugging in the presence of optimization for some compiler options that are useful in this approach.
+- Use -g level
+    Use the -g level suboption to control the amount of debugging information made available. Increasing it improves debug capability, but prevents some optimizations.
+- Use -qoptdebug
+    When compiling with -O3 optimization or higher, use the compiler option -qoptdebug to generate a pseudocode file that more accurately maps to how instructions and variable values will operate in an optimized program. With this option, when you load your program into a debugger, you will be debugging the pseudocode for the optimized program. See Using -qoptdebug to help debug optimized programs for more information.
+
+这一小节主要介绍了优化对debug功能的影响
+
+
+
+#### Tracing procedures in your code
+
+> You can **instruct the compiler to insert calls to the tracing procedures that you have defined to aid in debugging or timing the execution of other procedures.**
+
+> To trace procedures in your program, you must specify which procedures to trace. You must also provide your own tracing procedures. If you enable tracing without providing tracing procedures, you will get linker errors about undefined symbols called __func_trace_enter, __func_trace_exit, and possibly __func_trace_catch.
+
+#### [Advanced optimization concepts](https://www.ibm.com/docs/en/xffbg/121.141?topic=guide-advanced-optimization-concepts)
+> After you apply command-line optimizations and tuning that are appropriate to your application and the constraints of your development cycle, you have opportunities to **further improve the performance** of your application through **aliasing and inlining**.
+
+> See the following topics for more information:
+>  * Aliasing
+>    An alias occurs when different variables point directly or indirectly to a single area of storage. Aliasing refers to assumptions made during optimization about which variables can point to or occupy the same storage area.
+>  * Inlining
+>    Inlining is the process of replacing a subroutine or function call at the call site with the body of the subroutine or function being called. This **eliminates call-linkage overhead** and can expose significant optimization opportunities.
+
+##### Aliasing
+
+> An alias occurs when different variables point directly or indirectly to a single area of storage. Aliasing refers to assumptions made during optimization about which variables can point to or occupy the same storage area.
+
+> When an alias exists, or the potential for an alias occurs during the optimization process, pessimistic aliasing occurs. This can inhibit optimizations like dead store elimination and loop transformations on aliased variables. Also, pessimistic aliasing can generate additional loads and stores as the compiler must ensure that any changes to the variable that occur through the alias are not lost.
+
+> When aliasing occurs there is less opportunity for optimization transformations to occur on and around aliased variables than variables where no aliasing has taken place. For example, if variables A, B, and C are all aliased, any optimization must assume that a store into or a use of A is also a store or a use of B and C, even if that is not the case. Some of the highest optimization levels can improve alias analysis and remove some pessimistic aliases. However, in all cases, when it is not proven during an optimization transformation that an alias can be removed that alias must be left in place.
+Where possible, avoid programming techniques that lead to pessimistic aliasing assumptions. These aliasing assumptions are the single most limiting factor to optimization transformations. The following situations can lead to pessimistic aliasing:
+
+> * When you assign a pointer the address of any variable, the pointer can be aliased with globally visible variables and with static variables visible in the pointer's scope.
+> * When you call a procedure that has dummy arguments passed by reference, aliasing occurs for variables used as actual arguments, and for global variables.
+> * The compiler will make several worst-case aliasing assumptions concerning variables in common blocks and modules. These assumptions can inhibit optimization.
+
+##### Inlining
+
+Inlining is the process of replacing a subroutine or function call at the call site with the body of the subroutine or function being called. This **eliminates call-linkage overhead** and can expose significant optimization opportunities.
+
+For example, with inlining, the compiler can replace the subroutine parameters in the function body with the actual arguments passed. Inlining trade-offs can include code bloat and an increase in the difficulty of debugging your source code.
+
+If your application contains many calls to small procedures, the procedure call overhead can sometimes increase the execution time of the application considerably. Specifying the -qinline compiler option can **reduce this overhead**. Additionally, you can use the -p or -pg options and profiling tools to determine which subprograms your application calls most frequently, and use -qinline to list their names to ensure inlining.
+
+###### Finding the right level of inlining
+
+A common occurrence in application optimization is excessive inlining. This can actually lead to a decrease in performance because running larger programs can cause more frequent cache misses and page faults. Because the XL compilers contain safeguards to prevent excessive inlining, this can lead to situations where subprograms you want to inline are not automatically inlined when you specify -qinline.
+Some common conditions that prevent -qinline from inlining particular subprograms are:
+
+    The calling and called procedures are in different compilation units. If so, you can use the -qinline option in the link step to enable cross-file inlining. This applies to optimization level -O5 only.
+    After inlining expands a subprogram to a particular limit, the optimizer does not inline subsequent calls to that subprogram.
+    Any interface errors, such as different numbers, sizes, or types of arguments or return values, can prevent inlining for a subprogram call. You can also use interface blocks for the procedures being called.
+    Actual or potential aliasing of dummy arguments or automatic variables can limit inlining. Consider the following cases:
+        There are more than 31 arguments to the procedure your application is calling.
+        Any automatic variables in the called procedures are involved in an EQUIVALENCE statement
+        The same variable argument is passed more than once in the same call. For example, CALL SUB(X,Y,X).
+    Some procedures that use computed GO TO statements, where any of the corresponding statement labels are also used in an ASSIGN statement.
+
+To change the size limits that control inlining, you can specify -qinline=level=n, where n is 0 through 10. Larger values allow more inlining.
+
+It is possible to inline C/C++ functions into Fortran programs and Fortran functions into C/C++ programs during link time optimizations. You must compile the C/C++ code using the IBM® XL C/C++ compilers with -qinline and a compatible option set to that used in the IBM XL Fortran compilation.
+
+#### [Managing code size](https://www.ibm.com/docs/en/xffbg/121.141?topic=guide-managing-code-size)
+
+#### [Interlanguage calls](https://www.ibm.com/docs/en/xffbg/121.141?topic=guide-interlanguage-calls)
+
 
 ## LLVM简介
 下面将介绍下当下最优秀的编译器之一LLVM
