@@ -23,7 +23,7 @@ three basic symbol types
 >In its simplest form, symbol resolution involves the use of a **precedence** relationship. This relationship has **defined** symbols dominate **tentative** symbols, which in turn dominate **undefined** symbols
 
 
-## Runtime Linker 
+## Runtime Linker
 
 > As part of the initialization and execution of an executable, an **interpreter** is called to complete the binding of the application to its dependencies. In the Oracle Solaris OS, this interpreter is referred to as the **runtime linker**.
 During the link-editing of an executable, **a special .interp section**, together with an associated program header, are created. This section contains a path name specifying the program's interpreter. The default name supplied by the link-editor is the name of the runtime linker: /usr/lib/ld.so.1 for a 32-bit executable and /usr/lib/64/ld.so.1 for a 64-bit executable.
@@ -168,7 +168,7 @@ Dynamic objects have a base address, which is the lowest virtual address associa
 在执行期间，一个动态对象的基址是根据这三个值计算出来的*****
 
 #### Segment Contents
-An object file segment consists of one or more sections, though this fact is transparent to the program header. Whether the file segment holds one section or many sections, is also immaterial to program loading. 
+An object file segment consists of one or more sections, though this fact is transparent to the program header. Whether the file segment holds one section or many sections, is also immaterial to program loading.
 
 ### Program Loading
 
@@ -196,7 +196,7 @@ must have segment images whose file offsets and virtual addresses are **congruen
 
 ----------------------------
 
-1. Historically, weak symbols have been used to **circumvent interposition**, or test for optional functionality. 
+1. Historically, weak symbols have been used to **circumvent interposition**, or test for optional functionality.
 2. Although this archive extraction can be
 achieved by specifying multiple -u options to the link-edit, this example also shows how the **eventual scope** of a symbol can be reduced to local.
 
@@ -211,8 +211,38 @@ Whether the file segment holds one section or many sections, is also
 
 
 
+https://www.airs.com/blog/archives/38
+
+https://docs.oracle.com/cd/E37838_01/html/E36783/index.html
 
 
+
+An entry in an ELF symbol table has eight pieces of information: a name, a value, a size, a section, a binding, a type, a visibility, and undefined additional information (currently there are six undefined bits, though more may be added). An ELF symbol defined in a shared object may also have an associated version name.
+
+The name is obvious.
+
+For an ordinary defined symbol, the section is some section in the file (specifically, the symbol table entry holds an index into the section table). For an object file the value **is relative to the start of the section**. For an executable the value is **an absolute address**. For a shared library the value is **relative to the base address.**
+
+
+
+
+The assembler does not know the address of the global variable g, which is another way of saying that the assembler does not know the value of the symbol g. It is the linker that is going to pick that address. So the assembler has to tell the linker that it needs to use the address of g in this instruction. The way the assembler does this is to create a relocation.
+
+assembler不知道符号的地址，但是它对符号创建了relocation entry，而relocation entry会指导linker（linker editor或者 runtime linker, anyway）对二进制文件
+中的某个位置做修正
+relocation entry会告诉linker，目标符号是什么，这样linker就可以拿到目标符号的地址，然后relocation entry还会告诉linker，二进制文件中需要修正的位置在哪。
+而且relocation entry中的type字段还会告诉linker，以何种规则计算出一个值，从而拿到这个值填充到要修正的位置。
+
+
+
+
+https://www.airs.com/blog/archives/49
+symbol resolution
+
+Symbol resolution is what the linker does the second and subsequent times that it sees a particular symbol.
+
+Some symbols are local to a specific object files. We can ignore these for the purposes of symbol resolution, as by definition the linker will
+**never see them more than once**. In ELF these are the symbols with a binding of STB_LOCAL.
 
 error: RPC failed; curl 56 GnuTLS recv error (-9): Error decoding the received TLS packet.
 
@@ -231,14 +261,3 @@ tar   zxvf  google_devices-walleye-qq3a.200705.002-42602ba1.tgz
 
 
 m -j8
-
-
-
-
-
-
-
-
-
-
-
