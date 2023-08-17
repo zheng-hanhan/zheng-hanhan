@@ -18,7 +18,7 @@ folder: compiler/llvm
 
 1. Value及常见子类
 
-![Value and Its Commonly-Used SubClasses](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/1.png)
+![Value and Its Commonly-Used SubClasses](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/1.png)
 
 
 我大致绘制了一些常见的Value的子类，每个Value类型的实例都是有Type的。关于[Value](http://llvm.org/docs/ProgrammersManual.html#the-value-class)
@@ -66,7 +66,7 @@ define dso_local i32 @func(i32 %0, i32 %1, i32 %2) #0 {
 ```
 为了说明问题，将其转化成下图：
 
-![IR Illustration](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/2.png)
+![IR Illustration](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/2.png)
 
 这里，着重看虚线框框出来的三条指令，每条指令在内存中都由一个Instruction子类对象来表
 示，由于Instruction是Value的子类，所以上面三条Instruction可以看做是三个Value，由于这个
@@ -114,11 +114,11 @@ class Use {
 
 所以在内存中，use list类似于这种：
 
-![User List](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/user_list.png)
+![User List](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/user_list.png)
 
 接下来关注下Function和GlobalVariable类，把上图在下面再粘贴一下
 
-![Value and Its Commonly-Used SubClasses](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/1.png)
+![Value and Its Commonly-Used SubClasses](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/1.png)
 
 为啥全局变量（GlobalVariable）和函数（Function）是用Constant的子类，可能可以这样理
 解，那就是全局变量和函数它们在链接后，它们的Value（即地址address）都是固定的，从这种
@@ -129,7 +129,7 @@ class Use {
 
 2. Type及常见子类
 
-![User List](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/type_and_subclass.png)
+![User List](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/type_and_subclass.png)
 
 每个Value都有一个Type，这个很好理解哈，值得注意的是，Type不是Value的子类哈。
 稍微提一下[FunctionType](http://llvm.org/docs/ProgrammersManual.html#functiontype)，它为Function指定了形式化参数和返回值信息。一个FunctionType实
@@ -139,7 +139,7 @@ class Use {
 
 其次介绍一下Module、Function、BasicBlock以及Instruction实例之间在内存中的组织关系
 
-![Organization In Memory](../assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/relation.png)
+![Organization In Memory](/assets/img/2019-10-08-llvm_ir_key_data_structure_introduction/relation.png)
 
 上图非常清晰的将这四个结构在LLVM中的组织方式展示了出来，可以看出，这些数据结构以某种
 链表的形式进行了连接，LLVM中提供了iterator以及visitor等两种方式来遍历这些结构，在遍历的

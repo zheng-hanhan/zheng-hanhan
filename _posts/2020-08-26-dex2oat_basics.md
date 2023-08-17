@@ -12,7 +12,7 @@ folder: vee/art
 
 ## 简介
 
-![build log](../assets/img/2020-08-26-dex2oat_basics/build-verbose.png)
+![build log](/assets/img/2020-08-26-dex2oat_basics/build-verbose.png)
 
 在我们构建出来的out目录下，有一个叫做verbose.log.gz的文件，我们使用gzip -d verbose.log.gz
 可以得到一个文本文件verbose.log，它保存了在构建整个系统的时候，详细的构建流程。

@@ -15,10 +15,10 @@ folder: vee/art
 [Ubuntu 20.04](https://releases.ubuntu.com/20.04/)操作系统实例。
 详细的参数如下图：
 
-![环境配置概览图](../assets/img/2020-07-27-aosp_build/vmware-config.png)
+![环境配置概览图](/assets/img/2020-07-27-aosp_build/vmware-config.png)
 
 分配给这个虚拟机实例的资源配置如下：
-![虚拟机实例资源配置](../assets/img/2020-07-27-aosp_build/ubuntu20-config.png)
+![虚拟机实例资源配置](/assets/img/2020-07-27-aosp_build/ubuntu20-config.png)
 
 我给ubuntu实例分配了500+GB的磁盘，并分配了22GB的内存（因为编译AOSP很耗费内存），现在编译完了，笔者又把它手动调低到了图中的16-GB。编译AOSP的时候，除了分配22GB的内存外，笔者还在ubuntu实例中分配了一个32GB的swap空间，担心内存不够，发生交换。快速创建swap空间可以参考[这篇文章](https://cloud.tencent.com/developer/article/1631696)。
 
@@ -34,7 +34,7 @@ cd AOSP   # 解压得到的 AOSP 工程目录
 首先通过上述这几个命令下载一个初始的包下来，然后在这个基础包的基础上，来获取你想要的特定版本的aosp源码，
 因为笔者在淘宝上买了一个Pixel 2手机用来刷机的（欧版，已解锁），为了一次刷机成功，必须保证要刷一个确定版本的aosp源码。
 从这个[官网](https://source.android.com/setup/start/build-numbers#source-code-tags-and-builds)可以获取特定版本支持的特定手机。对于笔者来说选择的是如下所示的AOSP代码。build号是QQ3A.200705.002，tag号是android-10.0.0_r40，记住这两个号。
-![本文选定的代码版本信息](../assets/img/2020-07-27-aosp_build/src-tag.png)
+![本文选定的代码版本信息](/assets/img/2020-07-27-aosp_build/src-tag.png)
 
 现在假设我们已经解压aosp-latest.tar并进入了目录AOSP下，我们执行下下面这个命令，告诉repo，我想要同步android-10.0.0_r40对应的AOSP代码。
 
@@ -85,11 +85,11 @@ sudo apt-get update
 ```
 这些都执行完毕后，我们就可以开始执行上面的repo sync命令了，坐等同步完毕，有时候一次性repo sync不成功，需要多执行几次，这个等待时间是蛮久的。同步完成之后，目录结构显示如下：
 
-![AOSP Checkout 目录结构](../assets/img/2020-07-27-aosp_build/aosp-checkout.png)
+![AOSP Checkout 目录结构](/assets/img/2020-07-27-aosp_build/aosp-checkout.png)
 
 因为我们是要最终编译出image文件往Pixel 2手机上面刷机，所以我们还需要对应的驱动源码，放置在这个aosp目录下，我们还记得上面的build号是QQ3A.200705.002，依据这个build号，我们可以找到对应的[驱动文件](https://developers.google.com/android/drivers#walleyeqq3a.200705.002)，将这些驱动文件下载下来，解压后放置到aosp目录下，具体的步骤也可以参考[这篇文档](https://back2basics.io/2020/05/creating-a-android-aosp-build-machine-on-ubuntu-20-04/)。效果如下：
 
-![vendor文件夹结构](../assets/img/2020-07-27-aosp_build/vendor.png)
+![vendor文件夹结构](/assets/img/2020-07-27-aosp_build/vendor.png)
 
 如果后面你刷机失败了，那么可以下载官方已经编译好的镜像进行刷机恢复，对于pixel 2,可以在[这个列表](https://developers.google.com/android/images#walleye)中下载官方image来进行恢复。
 
@@ -113,28 +113,28 @@ m -j8
 注意，我的手机是pixel2，所以我跟的是aosp_walleye-userdebug，对于不一样的测试机，需要选择不一样的配置。
 编译完之后，显示如下：
 
-![编译成功](../assets/img/2020-07-27-aosp_build/build-completed-2.png)
+![编译成功](/assets/img/2020-07-27-aosp_build/build-completed-2.png)
 
 ## 刷机
 这个时候，我们就可以将pixel手机连接到虚拟机中了，请选择默认情况下将pixel 2直接连接到虚拟机中，而不是连接到本地机上，
 因为在刷机的过程中，可能会数次重启，如果不是默认连接到虚拟机中的话，那么刷机的时候会中断，要手动每次去挂接到虚拟机中，这不仅麻烦，也会大概率使得刷机失败。注意，一定要打开usb调试选项才能使得电脑探测到手机，adb devices才能看到手机。
 而且我们在手机界面还要选择同意电脑usb调试它：
 
-![允许usb调试](../assets/img/2020-07-27-aosp_build/allow-usb-debugging.png)
+![允许usb调试](/assets/img/2020-07-27-aosp_build/allow-usb-debugging.png)
 
 我们每次插拔手机的时候，如果usb设置仅仅是充电，那么电脑不一定能感知到这个手机，adb devices可能为空，我们可以手动设置下默认的usb插入行为是传输文件。如下面两张图：
 
-![usb默认选项配置](../assets/img/2020-07-27-aosp_build/default-usb-config.png)
+![usb默认选项配置](/assets/img/2020-07-27-aosp_build/default-usb-config.png)
 
-![配置默认行为为文件传输](../assets/img/2020-07-27-aosp_build/usb-file-transfer.png)
+![配置默认行为为文件传输](/assets/img/2020-07-27-aosp_build/usb-file-transfer.png)
 
 系统默认安装的adb 和 fastboot可能版本比较老，flash编译出来的image的时候，会提示版本太老，不能刷机，我们去[官网下载](https://developer.android.com/studio/releases/platform-tools#downloads)新的工具即可。
 
-![platform-tools-for-linux](../assets/img/2020-07-27-aosp_build/platform-tools-for-linux.png)
+![platform-tools-for-linux](/assets/img/2020-07-27-aosp_build/platform-tools-for-linux.png)
 
 笔者下载下来之后，解压，在笔者机器上解压结果入下图：
 
-![adb-fastboot-new](../assets/img/2020-07-27-aosp_build/adb-fastboot-new.png)
+![adb-fastboot-new](/assets/img/2020-07-27-aosp_build/adb-fastboot-new.png)
 
 我们只需要将这个含有adb和fastboot的目录添加到PATH中即可，笔者在~/.bashrc这个配置文件末尾加上了如下一行
 ```
@@ -156,11 +156,11 @@ fastboot flashall -w
 ```
 terminal中刷机命令执行成功的界面如下：
 
-![pixel 2 刷机成功](../assets/img/2020-07-27-aosp_build/flash-ok.png)
+![pixel 2 刷机成功](/assets/img/2020-07-27-aosp_build/flash-ok.png)
 
 实体手机的界面如下：
 
-![pixel-2-interface](../assets/img/2020-07-27-aosp_build/interface-pixel-2.png)
+![pixel-2-interface](/assets/img/2020-07-27-aosp_build/interface-pixel-2.png)
 
 
 

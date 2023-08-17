@@ -21,7 +21,7 @@ folder: compiler/llvm
 
  那么问题来了，如何能够得到这样一个顺序呢？首先我们想到的是先序遍历，看起来貌似先序(pre-ordering)遍历可以满足我们的需要。来看一个例子：
 
-![Fig.1](../assets/img/2019-10-11-RPO-in-graph/fig-1.png)
+![Fig.1](/assets/img/2019-10-11-RPO-in-graph/fig-1.png)
 
   在这个例子中，
 
@@ -33,7 +33,7 @@ folder: compiler/llvm
 
  前文我们说过Tree属于DAG，我们下面看一个更泛化一点的DAG图的例子[1]：
 
-![Fig.2](../assets/img/2019-10-11-RPO-in-graph/fig-2.png)
+![Fig.2](/assets/img/2019-10-11-RPO-in-graph/fig-2.png)
 
     对其进行先序遍历，得出A->B->D->C (或者A->C->D->B), 很明显，图中D的predecessors为B和C，但是C并没有都在其前面被遍历到
     对其进行后序遍历，得出D->B->C->A (或者D->C->B->A)，那RPO就是把后序遍历的结果逆过来，即，A->C->B->D(或者A->B->C->D)，这个序列依然满足上述约束
@@ -43,7 +43,7 @@ folder: compiler/llvm
  注：上面这个图是DAG(有向无环图)，对于DAG来说，RPO的结果和对该图进行拓扑排序得出的结果是一致的，这个我们在前文中是有提及的。
 
   我们知道DAG属于Digraph，我们看一个更泛化的含有cycle的Digraph的例子：
-![Fig.3](../assets/img/2019-10-11-RPO-in-graph/fig-3.png)
+![Fig.3](/assets/img/2019-10-11-RPO-in-graph/fig-3.png)
 
       对其进行先序遍历，得出A->B->C->E->D(或者A->B->C->D->E)
     对其进行后序遍历，得出E->D->C->B->A(或者D->E->C->B->A),然后reverse一下，得出RPO序列，即，A->B->C->D->E(或者A->B->C->E->D)
@@ -52,7 +52,7 @@ folder: compiler/llvm
 
 前文我们有提及到强连通分量SCC(Strongly Connected Component)的概念，其实上图可以划分成三个SCCs，如下：
 
-![Fig.4](../assets/img/2019-10-11-RPO-in-graph/fig-4.png)
+![Fig.4](/assets/img/2019-10-11-RPO-in-graph/fig-4.png)
 
  单个结点构成的子图符合强连通分量的定义，所以只含有结点A的子图是一个SCC，同样地，只含有结点E的子图也是一个SCC，还有一个SCC就是结点B、C、D构成的子图。实际上，这个digraph就转成了由三个连通分量构成的DAG了，这个后面我们还会提及，这里先不提及。
 

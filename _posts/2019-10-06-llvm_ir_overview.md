@@ -17,7 +17,7 @@ folder: compiler/llvm
 语言来表示，那么就可以专心的针对这个共通的语言来研究如何对其优化，使得最后生成的程序能
 够更优（从时间、空间等方面）。相关的优化算法实现也因此具有通用性、可重用性。
 
-![LLVM IR Process](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_process.png)
+![LLVM IR Process](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_process.png)
 
 在LLVM中，这个共通的语言，就是LLVM IR。IR是Intermediate Representation的缩写，即中间描述或者中间表示。在LLVM中，Clang主职前端（Front End），Clang的输入是各种高级语言
 书写的源代码，然后Clang对其进行词法分析、语法分析、语义分析，形成抽象语法树，然后通过LLVM IR代码生成器（LLVM IR Code Generator）将这些源代码转换成LLVM IR。接着中端的
@@ -29,7 +29,7 @@ LLVM IR有三种存在形态:
 2. 以二进制格式存储在文件中的形态(.bc)
 3. 以可读的文本形式存储在文件中的形态(.ll)
 
-![LLVM IR Transition](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_transition.png)
+![LLVM IR Transition](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_transition.png)
 
 下面将介绍，使用clang命令将高级语言（以c为例）写的源文件转换成可读的LLVM IR文件。
 ```
@@ -58,7 +58,7 @@ LLVM IR 的一些特性
 
 ## LLVM IR 文件结构
 
-![LLVM IR Layout](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_layout.png)
+![LLVM IR Layout](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_layout.png)
 
 上图是LLVM IR文件主要构成，Module是编译、分析和优化的单位，它包含了全局变量（Global Variable）、函数（Function）等。
 
@@ -202,16 +202,16 @@ int main(int argc, char **argv) {
 
 对应的IR如下：
 
-![LLVM IR Example](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example.png)
+![LLVM IR Example](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example.png)
 
 现在我们来关注一下函数foo，容易知道，函数foo有三个基本块，分别用白色框框出来了，另外，由于第一个基本块的标签是隐含的，我使用绿色数字把它绘制出来了，每个基本块的标签用小
 红框进行了标注。
 
-![LLVM IR Example](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example_2.png)
+![LLVM IR Example](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example_2.png)
 
 下面我们看一下下图中黄框的注释
 
-![LLVM IR Example](../assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example_3.png)
+![LLVM IR Example](/assets/img/2019-10-06-llvm_ir_overview/llvm_ir_example_3.png)
 
 这个自动生成的注释表达的意思是，以.lr.ph为label的基本块，它前面的基本块(predecessor)
 有两个，一个是以.lr.ph为label的基本块(即自身)，一个是以%0为label的基本块。下面我们看
