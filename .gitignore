@@ -1,19 +1,21 @@
-push.sh
-
-# hidden files
-.*
-!.github
-
-# jekyll cache
-_site
+# Bundler cache
+.bundle
 vendor
+Gemfile.lock
 
-# rubygem
+# Jekyll cache
+.jekyll-cache
+_site
+
+# RubyGems
 *.gem
-# yard docs
-doc
 
-# npm dependencies
+# NPM dependencies
 node_modules
 package-lock.json
 
+# IDE configurations
+.idea
+.vscode
+
+# Misc
